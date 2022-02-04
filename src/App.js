@@ -13,15 +13,15 @@ import { Modal } from './components/Modal/Modal';
 import { Container } from './App.styles';
 
 const App = () => {
-    const [page, setPage] = useState(1);
-    const [images, setImages] = useState([]);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [showModal, setShowModal] = useState(false);
-    const [largeImage, setLargeImage] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const [images, setImages] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [largeImage, setLargeImage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-      useEffect(() => {
+  useEffect(() => {
     if (searchQuery.trim() === '') {
       return;
     }
@@ -50,43 +50,43 @@ const App = () => {
         toast.error(error);
       })
       .finally(() => setIsLoading(false));
-    };
-    
-      const handleFormSubmit = searchQuery => {
-        setSearchQuery(searchQuery.trim());
-        setPage(1);
-        setImages([]);
-    };
+  };
 
-    const openModal = largeImageURL => {
-        setShowModal(true);
-        setLargeImage(largeImageURL);
-    };
+  const handleFormSubmit = ev => {
+    setSearchQuery(ev);
+    setPage(1);
+    setImages([]);
+  };
 
-    const toggleModal = () => {
-        setShowModal(false);
-        setLargeImage('');
-    };
+  const openModal = largeImageURL => {
+    setShowModal(true);
+    setLargeImage(largeImageURL);
+  };
 
-    return (
-        <Container>
-            <Searchbar onSubmit={handleFormSubmit} />
+  const toggleModal = () => {
+    setShowModal(false);
+    setLargeImage('');
+  };
 
-            {isLoading === true && <Spiner />}
-            <>
-                <ImageGallery images={images} openModal={openModal} />
+  return (
+    <Container>
+      <Searchbar onSubmit={handleFormSubmit} />
 
-                {images.length > 0 && <Button onClick={fetchImages} />}
-            </>
+      {isLoading === true && <Spiner />}
+      <>
+        <ImageGallery images={images} openModal={openModal} />
 
-            {showModal && (
-                <Modal onClose={toggleModal}>
-                    <img src={largeImage} alt="" />
-                </Modal>
-            )}
-            <ToastContainer />
-        </Container>
-    );
+        {images.length > 0 && <Button onClick={fetchImages} />}
+      </>
+
+      {showModal && (
+        <Modal onClose={toggleModal}>
+          <img src={largeImage} alt="" />
+        </Modal>
+      )}
+      <ToastContainer />
+    </Container>
+  );
 };
 
 export default App;
