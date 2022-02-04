@@ -76,7 +76,7 @@ const App = () => {
       <>
         <ImageGallery images={images} openModal={openModal} />
 
-        {images.length > 0 && <Button onClick={fetchImages} />}
+        {images.length > 0 && <Button onClick={handleFormSubmit} />}
       </>
 
       {showModal && (
