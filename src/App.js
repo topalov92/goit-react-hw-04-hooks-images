@@ -49,7 +49,7 @@ const App = () => {
         setError(er);
         toast.error(error);
       })
-      .finally(() => isLoading(false));
+      .finally(() => setIsLoading(false));
     };
     
       const handleFormSubmit = searchQuery => {
