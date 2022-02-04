@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
 
-import getImages from './services/imageAPI';
+import fetchImages from './services/imageAPI';
 
-import { Searchbar } from './Components/Searchbar/Searchbar';
-import { Spiner } from './Components/Loader/Spiner';
-import { ImageGallery } from './Components/ImageGallery/ImageGallery';
-import { Button } from './Components/Button/Button';
-import { Modal } from './Components/Modal/Modal';
+import { Searchbar } from './components/Searchbar/Searchbar';
+import { Spiner } from './components/Loader/Spiner';
+import { ImageGallery } from './components/ImageGallery/ImageGallery';
+import { Button } from './components/Button/Button';
+import { Modal } from './components/Modal/Modal';
 
 import { Container } from './App.styles';
 
@@ -19,72 +19,43 @@ const App = () => {
     const [showModal, setShowModal] = useState(false);
     const [largeImage, setLargeImage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-    useEffect(() => {
-        if (!searchQuery) {
-            return;
+      useEffect(() => {
+    if (searchQuery.trim() === '') {
+      return;
+    }
+    requestFetch();
+  }, [searchQuery, page]);
+
+  const requestFetch = () => {
+    setIsLoading(true);
+    fetchImages(searchQuery, page)
+      .then(data => {
+        setImages([...images, ...data.hits]);
+        if (data.hits.length > 0) {
+          toast.success('request completed');
+          if (page > 1) {
+            window.scrollTo({
+              top: document.body.scrollHeight,
+              behavior: 'smooth',
+            });
+          }
+        } else {
+          toast.error('No images found on request');
         }
-        fetchImages();
-    }, [searchQuery]);
-
-    const handleFormSubmit = searchQuery => {
+      })
+      .catch(er => {
+        setError(er);
+        toast.error(error);
+      })
+      .finally(() => isLoading(false));
+    };
+    
+      const handleFormSubmit = searchQuery => {
         setSearchQuery(searchQuery.trim());
         setPage(1);
         setImages([]);
-    };
-
-    const fetchImages = () => {
-        setIsLoading(true);
-
-        getImages(searchQuery, page)
-            .then(hits => {
-                setPage(page + 1);
-                setImages([...images, ...hits]);
-                setIsLoading(false);
-
-                if (hits.length > 0) {
-                    toast.success('We have a picture for you!', {
-                        position: 'bottom-right',
-                        autoClose: 1000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                    });
-                }
-
-                if (hits.length === 0) {
-                    toast.info('Picture is not found', {
-                        position: 'bottom-right',
-                        autoClose: 1000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                    });
-                }
-
-                window.scrollTo({
-                    top: document.documentElement.scrollHeight,
-                    behavior: 'smooth',
-                });
-            })
-            .catch(error => {
-                console.log(error);
-                setIsLoading(false);
-
-                toast.error('Error!', {
-                    position: 'bottom-right',
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                });
-            });
     };
 
     const openModal = largeImageURL => {
