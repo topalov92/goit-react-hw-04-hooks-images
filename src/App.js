@@ -52,6 +52,10 @@ const App = () => {
       .finally(() => setIsLoading(false));
   };
 
+  const handleChangePage = () => {
+    setPage(page => page + 1);
+  };
+
   const handleFormSubmit = ev => {
     setSearchQuery(ev);
     setPage(1);
@@ -76,7 +80,7 @@ const App = () => {
       <>
         <ImageGallery images={images} openModal={openModal} />
 
-        {images.length > 0 && <Button onClick={handleFormSubmit} />}
+        {images.length > 0 && <Button onClick={handleChangePage} />}
       </>
 
       {showModal && (
